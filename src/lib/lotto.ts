@@ -1,0 +1,56 @@
+/**
+ * 로또 번호 생성 유틸리티
+ */
+
+export interface LottoNumbers {
+  numbers: number[]
+  createdAt: string
+}
+
+/**
+ * 1~45 사이의 랜덤한 6개 번호를 생성합니다.
+ * 번호는 오름차순으로 정렬됩니다.
+ */
+export function generateLottoNumbers(): number[] {
+  const numbers: Set<number> = new Set()
+
+  while (numbers.size < 6) {
+    const num = Math.floor(Math.random() * 45) + 1
+    numbers.add(num)
+  }
+
+  return Array.from(numbers).sort((a, b) => a - b)
+}
+
+/**
+ * 오늘 날짜를 YYYY-MM-DD 형식으로 반환합니다.
+ */
+export function getTodayString(): string {
+  const today = new Date()
+  const year = today.getFullYear()
+  const month = String(today.getMonth() + 1).padStart(2, '0')
+  const day = String(today.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+/**
+ * 두 번호 배열을 비교하여 일치하는 번호 개수를 반환합니다.
+ */
+export function compareNumbers(userNumbers: number[], winningNumbers: number[]): number {
+  return userNumbers.filter(num => winningNumbers.includes(num)).length
+}
+
+/**
+ * 일치 개수와 보너스 번호 일치 여부로 등수를 판정합니다.
+ */
+export function determineRank(
+  matchCount: number,
+  hasBonusMatch: boolean
+): string | null {
+  if (matchCount === 6) return '1등'
+  if (matchCount === 5 && hasBonusMatch) return '2등'
+  if (matchCount === 5) return '3등'
+  if (matchCount === 4) return '4등'
+  if (matchCount === 3) return '5등'
+  return null
+}
