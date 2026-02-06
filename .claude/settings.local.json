@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(npx create-next-app:*)",
-      "Bash(where:*)"
+      "Bash(where:*)",
+      "WebFetch(domain:avada.tistory.com)"
     ]
   }
 }
