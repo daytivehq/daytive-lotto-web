@@ -1,6 +1,8 @@
 interface LottoBallProps {
   number: number;
   size?: 'sm' | 'md' | 'lg';
+  dimmed?: boolean;
+  highlighted?: boolean;
 }
 
 const sizeClasses = {
@@ -17,7 +19,7 @@ function getBallColor(num: number): string {
   return '#4CAF50'; // 녹색
 }
 
-export default function LottoBall({ number, size = 'md' }: LottoBallProps) {
+export default function LottoBall({ number, size = 'md', dimmed = false, highlighted = false }: LottoBallProps) {
   const sizeClass = sizeClasses[size];
   const backgroundColor = getBallColor(number);
 
@@ -30,6 +32,8 @@ export default function LottoBall({ number, size = 'md' }: LottoBallProps) {
         text-white font-bold
         shadow-lg
         transition-transform hover:scale-110
+        ${dimmed ? 'opacity-30' : ''}
+        ${highlighted ? 'ring-2 ring-yellow-400 ring-offset-2 ring-offset-white dark:ring-offset-gray-800' : ''}
       `}
       style={{ backgroundColor }}
     >

@@ -3,7 +3,9 @@
     "allow": [
       "Bash(npx create-next-app:*)",
       "Bash(where:*)",
-      "WebFetch(domain:avada.tistory.com)"
+      "WebFetch(domain:avada.tistory.com)",
+      "WebFetch(domain:api.lotto.daytive.com)",
+      "Bash(npm run build:*)"
     ]
   }
 }
