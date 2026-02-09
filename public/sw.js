@@ -1,14 +1,14 @@
 // Daytive Lotto - Service Worker
 // 버전을 변경하면 새 서비스 워커가 설치되면서 캐시가 갱신됩니다.
-const CACHE_VERSION = 'v1'
+const CACHE_VERSION = 'v2'
 const STATIC_CACHE = `lotto-static-${CACHE_VERSION}`
 const API_CACHE = `lotto-api-${CACHE_VERSION}`
 
-// 오프라인에서도 동작해야 하는 핵심 페이지
+// 오프라인에서도 동작해야 하는 핵심 페이지 (trailing slash 포함)
 const PRECACHE_URLS = [
   '/',
-  '/winning',
-  '/favorites',
+  '/winning/',
+  '/favorites/',
   '/manifest.json',
   '/favicon.svg',
 ]
@@ -52,7 +52,13 @@ self.addEventListener('fetch', (event) => {
   // GA, 외부 스크립트 등은 그대로 통과
   if (url.origin !== self.location.origin) return
 
-  // 정적 리소스: Cache First (캐시에 없으면 네트워크)
+  // 페이지 네비게이션: Network First (오프라인 시 캐시 폴백)
+  if (request.mode === 'navigate') {
+    event.respondWith(networkFirst(request, STATIC_CACHE))
+    return
+  }
+
+  // JS, CSS, 이미지 등 정적 에셋: Cache First
   event.respondWith(cacheFirst(request, STATIC_CACHE))
 })
 
@@ -69,13 +75,6 @@ async function cacheFirst(request, cacheName) {
     }
     return response
   } catch {
-    // 오프라인 + 캐시 미스 → 메인 페이지로 폴백
-    if (request.mode === 'navigate') {
-      return caches.match('/') || new Response('오프라인입니다.', {
-        status: 503,
-        headers: { 'Content-Type': 'text/html; charset=utf-8' },
-      })
-    }
     return new Response('', { status: 503 })
   }
 }
@@ -92,9 +91,16 @@ async function networkFirst(request, cacheName) {
   } catch {
     const cached = await caches.match(request)
     if (cached) return cached
-    return new Response(JSON.stringify({ error: '오프라인입니다.' }), {
+
+    // 페이지 요청이면 메인 페이지로 폴백
+    if (request.mode === 'navigate') {
+      const fallback = await caches.match('/')
+      if (fallback) return fallback
+    }
+
+    return new Response('오프라인입니다.', {
       status: 503,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'text/html; charset=utf-8' },
     })
   }
 }

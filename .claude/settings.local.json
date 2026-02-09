@@ -9,7 +9,9 @@
       "Bash(npm install:*)",
       "Bash(npm ls:*)",
       "Bash(dir:*)",
-      "Bash(powershell -Command:*)"
+      "Bash(powershell -Command:*)",
+      "Bash(curl:*)",
+      "Bash(ls -la \"d:\\\\Project\\\\lotto-web\\\\dist\\\\winning\"\" 2>/dev/null; ls -la \"d:Projectlotto-webdistfavorites\"\")"
     ]
   }
 }
