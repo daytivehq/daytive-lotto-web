@@ -10,6 +10,8 @@ const STORAGE_KEYS = {
   DAILY_NUMBERS: 'lotto_daily_numbers',
   FAVORITES: 'lotto_favorites',
   HISTORY: 'lotto_history',
+  EXCLUDED_NUMBERS: 'lotto_excluded_numbers',
+  INCLUDED_NUMBERS: 'lotto_included_numbers',
 } as const
 
 export interface DailyNumbersData {
@@ -57,6 +59,34 @@ function setStorageItem<T>(key: string, value: T): void {
 }
 
 /**
+ * 제외 번호 목록을 가져옵니다.
+ */
+export function getExcludedNumbers(): number[] {
+  return getStorageItem<number[]>(STORAGE_KEYS.EXCLUDED_NUMBERS, [])
+}
+
+/**
+ * 제외 번호 목록을 저장합니다.
+ */
+export function setExcludedNumbers(numbers: number[]): void {
+  setStorageItem(STORAGE_KEYS.EXCLUDED_NUMBERS, numbers)
+}
+
+/**
+ * 포함 번호 목록을 가져옵니다.
+ */
+export function getIncludedNumbers(): number[] {
+  return getStorageItem<number[]>(STORAGE_KEYS.INCLUDED_NUMBERS, [])
+}
+
+/**
+ * 포함 번호 목록을 저장합니다.
+ */
+export function setIncludedNumbers(numbers: number[]): void {
+  setStorageItem(STORAGE_KEYS.INCLUDED_NUMBERS, numbers)
+}
+
+/**
  * 오늘의 번호를 가져옵니다. 없으면 새로 생성합니다.
  */
 export function getTodayNumbers(): LottoNumbers {
@@ -67,9 +97,11 @@ export function getTodayNumbers(): LottoNumbers {
     return dailyData[today]
   }
 
-  // 새 번호 생성
+  const excluded = getExcludedNumbers()
+  const included = getIncludedNumbers()
+
   const newNumbers: LottoNumbers = {
-    numbers: generateLottoNumbers(),
+    numbers: generateLottoNumbers(excluded, included),
     createdAt: new Date().toISOString(),
   }
 
@@ -86,8 +118,11 @@ export function refreshTodayNumbers(): LottoNumbers {
   const today = getTodayString()
   const dailyData = getStorageItem<DailyNumbersData>(STORAGE_KEYS.DAILY_NUMBERS, {})
 
+  const excluded = getExcludedNumbers()
+  const included = getIncludedNumbers()
+
   const newNumbers: LottoNumbers = {
-    numbers: generateLottoNumbers(),
+    numbers: generateLottoNumbers(excluded, included),
     createdAt: new Date().toISOString(),
   }
 

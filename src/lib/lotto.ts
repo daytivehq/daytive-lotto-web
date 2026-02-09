@@ -9,14 +9,28 @@ export interface LottoNumbers {
 
 /**
  * 1~45 사이의 랜덤한 6개 번호를 생성합니다.
+ * 제외 번호는 생성에서 빠지고, 포함 번호는 반드시 결과에 포함됩니다.
  * 번호는 오름차순으로 정렬됩니다.
  */
-export function generateLottoNumbers(): number[] {
-  const numbers: Set<number> = new Set()
+export function generateLottoNumbers(
+  excluded: number[] = [],
+  included: number[] = [],
+): number[] {
+  const excludedSet = new Set(excluded)
+  const validIncluded = included.filter(n => !excludedSet.has(n) && n >= 1 && n <= 45)
 
-  while (numbers.size < 6) {
-    const num = Math.floor(Math.random() * 45) + 1
-    numbers.add(num)
+  if (validIncluded.length > 6) {
+    return validIncluded.slice(0, 6).sort((a, b) => a - b)
+  }
+
+  const numbers: Set<number> = new Set(validIncluded)
+  const pool = Array.from({ length: 45 }, (_, i) => i + 1)
+    .filter(n => !excludedSet.has(n) && !numbers.has(n))
+
+  while (numbers.size < 6 && pool.length > 0) {
+    const idx = Math.floor(Math.random() * pool.length)
+    numbers.add(pool[idx])
+    pool.splice(idx, 1)
   }
 
   return Array.from(numbers).sort((a, b) => a - b)

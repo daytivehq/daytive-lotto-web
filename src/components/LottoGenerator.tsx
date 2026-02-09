@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import LottoBallGroup from './LottoBallGroup';
+import NumberFilter from './NumberFilter';
 import type { LottoNumbers } from '@/lib/lotto';
 import {
   getTodayNumbers,
@@ -69,8 +70,11 @@ export default function LottoGenerator() {
           )}
         </div>
 
+        {/* 번호 필터 설정 */}
+        <NumberFilter onChanged={handleRefresh} />
+
         {/* 버튼 그룹 */}
-        <div className="flex gap-3">
+        <div className="flex gap-3 mt-4">
           <button
             onClick={handleRefresh}
             disabled={isAnimating}
