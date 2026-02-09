@@ -130,7 +130,7 @@ export default function LottoGenerator() {
 
       {/* 토스트 메시지 (화면 하단 고정) */}
       {showToast && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50">
           <div className="bg-gray-800 dark:bg-gray-700 text-white px-4 py-2 rounded-lg shadow-lg text-sm animate-fade-in">
             즐겨찾기에 저장되었습니다
           </div>
