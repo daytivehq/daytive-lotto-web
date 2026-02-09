@@ -127,7 +127,7 @@ const ogImage = `${siteUrl}/og-image.png`;
 
 <script>
   // 현재 페이지에 맞는 네비게이션 아이템 활성화
-  const path = window.location.pathname;
+  const path = window.location.pathname.replace(/\/$/, '') || '/';
   const navMap: Record<string, string> = {
     '/': 'home',
     '/winning': 'winning',
