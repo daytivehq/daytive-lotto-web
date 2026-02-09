@@ -1,9 +1,28 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import FavoritesList from '../components/FavoritesList';
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "로또 번호 즐겨찾기",
+  "description": "저장한 로또 번호를 날짜별로 관리하고 확인하세요.",
+  "url": "https://lotto.daytive.com/favorites/",
+  "isPartOf": {
+    "@type": "WebApplication",
+    "name": "Daytive Lotto",
+    "url": "https://lotto.daytive.com"
+  },
+};
 ---
 
-<Layout title="즐겨찾기 | Daytive Lotto">
+<Layout
+  title="즐겨찾기 | Daytive Lotto"
+  description="저장한 로또 번호를 날짜별로 관리하고, 언제든지 다시 확인하세요."
+  path="/favorites/"
+  keywords="로또 번호 저장, 로또 즐겨찾기, 로또 번호 관리, 저장한 로또 번호"
+  jsonLd={jsonLd}
+>
   <div class="flex-1 p-4 sm:p-8">
     <div class="max-w-md mx-auto">
       <!-- 헤더 -->

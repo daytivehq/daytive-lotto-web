@@ -1,9 +1,28 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import WinningNumbers from '../components/WinningNumbers';
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "로또 당첨번호 확인",
+  "description": "최신 로또 당첨번호를 조회하고, 내가 저장한 번호와 비교하여 당첨 여부를 확인하세요.",
+  "url": "https://lotto.daytive.com/winning/",
+  "isPartOf": {
+    "@type": "WebApplication",
+    "name": "Daytive Lotto",
+    "url": "https://lotto.daytive.com"
+  },
+};
 ---
 
-<Layout title="당첨 확인 | Daytive Lotto">
+<Layout
+  title="당첨 확인 | Daytive Lotto"
+  description="최신 로또 당첨번호를 조회하고, 내가 저장한 번호와 비교하여 당첨 여부를 확인하세요."
+  path="/winning/"
+  keywords="로또 당첨번호, 로또 당첨 확인, 로또 번호 조회, 로또 결과, 회차별 당첨번호"
+  jsonLd={jsonLd}
+>
   <div class="flex-1 p-4 sm:p-8">
     <div class="max-w-md mx-auto">
       <header class="mb-6">
