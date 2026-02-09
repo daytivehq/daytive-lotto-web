@@ -8,21 +8,61 @@ const today = new Date().toLocaleDateString('ko-KR', {
   day: 'numeric',
 });
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "Daytive Lotto",
-  "url": "https://lotto.daytive.com",
-  "description": "매일 새로운 로또 번호를 무료로 추천받고, 당첨 여부를 확인할 수 있는 서비스입니다.",
-  "applicationCategory": "UtilitiesApplication",
-  "operatingSystem": "Web",
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "KRW"
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Daytive Lotto",
+    "url": "https://lotto.daytive.com",
+    "description": "매일 새로운 로또 번호를 무료로 추천받고, 당첨 여부를 확인할 수 있는 서비스입니다.",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "Web",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "KRW"
+    },
+    "inLanguage": "ko",
   },
-  "inLanguage": "ko",
-};
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "로또 번호는 어떻게 생성되나요?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "1부터 45까지의 숫자 중 무작위로 6개를 선택하여 로또 번호를 생성합니다. 매일 새로운 번호가 추천되며, 마음에 들지 않으면 다시 뽑기가 가능합니다."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "추천받은 로또 번호를 저장할 수 있나요?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "네, 마음에 드는 번호는 즐겨찾기에 저장할 수 있습니다. 저장된 번호는 브라우저에 보관되어 언제든지 다시 확인할 수 있습니다."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "당첨 번호 확인은 어떻게 하나요?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "당첨확인 페이지에서 최신 로또 당첨번호를 조회하고, 저장한 내 번호와 자동으로 비교하여 당첨 여부를 확인할 수 있습니다."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "이 서비스는 무료인가요?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "네, Daytive Lotto는 완전 무료 서비스입니다. 회원가입 없이 누구나 자유롭게 로또 번호를 추천받고 당첨 여부를 확인할 수 있습니다."
+        }
+      }
+    ]
+  }
+];
 ---
 
 <Layout

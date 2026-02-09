@@ -1,0 +1,22 @@
+{
+  "name": "Daytive Lotto - 오늘의 로또 번호",
+  "short_name": "Daytive Lotto",
+  "description": "매일 새로운 로또 번호를 무료로 추천받고, 당첨 여부를 확인하세요.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3B82F6",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

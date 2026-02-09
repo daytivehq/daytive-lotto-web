@@ -4,7 +4,7 @@ interface Props {
   description?: string;
   path?: string;
   keywords?: string;
-  jsonLd?: Record<string, unknown>;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 }
 
 const siteUrl = 'https://lotto.daytive.com';
@@ -16,6 +16,8 @@ const {
   keywords = '로또, 로또 번호, 로또 추천, 로또 번호 생성기, 행운의 번호',
   jsonLd,
 } = Astro.props;
+
+const jsonLdItems = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 
 const canonicalUrl = `${siteUrl}${path}`;
 const ogImage = `${siteUrl}/og-image.png`;
@@ -49,15 +51,30 @@ const ogImage = `${siteUrl}/og-image.png`;
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
 
-    <!-- Favicon -->
+    <!-- Favicon & PWA -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#3B82F6" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Daytive Lotto" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
 
     <title>{title}</title>
 
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-V84DJFKSNY"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-V84DJFKSNY');
+    </script>
+
     <!-- JSON-LD Structured Data -->
-    {jsonLd && (
-      <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
-    )}
+    {jsonLdItems.map((item) => (
+      <script type="application/ld+json" set:html={JSON.stringify(item)} />
+    ))}
   </head>
   <body class="min-h-screen flex flex-col bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-gray-100">
     <main class="flex-1 flex flex-col pb-20">
