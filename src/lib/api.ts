@@ -5,7 +5,6 @@
 
 const API_BASE = 'https://api.lotto.daytive.com'
 const CACHE_KEY = 'lotto_winning_cache'
-const CACHE_TTL = 1000 * 60 * 30 // 30분
 
 export interface WinningData {
   round: number
@@ -46,42 +45,99 @@ function setCache(store: CacheStore): void {
   }
 }
 
-function isCacheValid(entry: CacheEntry | undefined): entry is CacheEntry {
+/**
+ * 다음 토요일 21:00 (추첨 후 여유시간) 까지의 밀리초를 반환합니다.
+ * 이미 토요일 21시 이후면 다음 주 토요일까지.
+ */
+function getNextDrawMs(): number {
+  const now = new Date()
+  const day = now.getDay() // 0=일 6=토
+  const hour = now.getHours()
+
+  let daysUntilSat = (6 - day + 7) % 7
+  if (daysUntilSat === 0 && hour >= 21) {
+    daysUntilSat = 7
+  }
+
+  const nextDraw = new Date(now)
+  nextDraw.setDate(now.getDate() + daysUntilSat)
+  nextDraw.setHours(21, 0, 0, 0)
+
+  return nextDraw.getTime() - now.getTime()
+}
+
+function isCacheFresh(entry: CacheEntry | undefined): entry is CacheEntry {
   if (!entry) return false
-  return Date.now() - entry.cachedAt < CACHE_TTL
+  return Date.now() - entry.cachedAt < getNextDrawMs()
+}
+
+function hasCacheData(entry: CacheEntry | undefined): entry is CacheEntry {
+  return !!entry?.data
+}
+
+function updateCache(cache: CacheStore, key: string, data: WinningData): void {
+  const entry: CacheEntry = { data, cachedAt: Date.now() }
+  cache[key] = entry
+  if (key !== 'latest') {
+    // 특정 회차 캐시는 영구 보관 (결과가 바뀌지 않음)
+  }
+  setCache(cache)
 }
 
 /**
  * 최신 회차 당첨번호를 가져옵니다.
+ * stale-while-revalidate: 캐시가 있으면 즉시 반환 + 백그라운드 갱신
  */
-export async function fetchLatestWinning(): Promise<WinningData> {
+export async function fetchLatestWinning(
+  onUpdate?: (data: WinningData) => void
+): Promise<WinningData> {
   const cache = getCache()
 
-  if (isCacheValid(cache.latest)) {
+  // 캐시가 fresh하면 바로 반환
+  if (isCacheFresh(cache.latest)) {
     return cache.latest.data
   }
 
+  // 캐시가 stale이지만 데이터가 있으면 → 즉시 반환 + 백그라운드 갱신
+  if (hasCacheData(cache.latest)) {
+    fetch(`${API_BASE}/round/latest`)
+      .then(res => res.ok ? res.json() : null)
+      .then((data: WinningData | null) => {
+        if (data && data.round !== cache.latest?.data.round) {
+          updateCache(cache, 'latest', data)
+          updateCache(cache, String(data.round), data)
+          onUpdate?.(data)
+        } else if (data) {
+          // 같은 회차라도 캐시 시간 갱신
+          updateCache(cache, 'latest', data)
+        }
+      })
+      .catch(() => {})
+
+    return cache.latest.data
+  }
+
+  // 캐시가 전혀 없으면 네트워크 대기
   const res = await fetch(`${API_BASE}/round/latest`)
   if (!res.ok) throw new Error('최신 당첨번호를 불러올 수 없습니다.')
 
   const data: WinningData = await res.json()
-  const entry: CacheEntry = { data, cachedAt: Date.now() }
-
-  cache.latest = entry
-  cache[String(data.round)] = entry
-  setCache(cache)
+  updateCache(cache, 'latest', data)
+  updateCache(cache, String(data.round), data)
 
   return data
 }
 
 /**
  * 특정 회차 당첨번호를 가져옵니다.
+ * 과거 회차는 결과가 바뀌지 않으므로 캐시가 있으면 영구 사용합니다.
  */
 export async function fetchWinningByRound(round: number): Promise<WinningData> {
   const cache = getCache()
   const key = String(round)
 
-  if (isCacheValid(cache[key])) {
+  // 과거 회차는 결과가 불변이므로 캐시가 있으면 항상 사용
+  if (hasCacheData(cache[key])) {
     return cache[key].data
   }
 
@@ -89,8 +145,7 @@ export async function fetchWinningByRound(round: number): Promise<WinningData> {
   if (!res.ok) throw new Error(`${round}회차 정보를 불러올 수 없습니다.`)
 
   const data: WinningData = await res.json()
-  cache[key] = { data, cachedAt: Date.now() }
-  setCache(cache)
+  updateCache(cache, key, data)
 
   return data
 }

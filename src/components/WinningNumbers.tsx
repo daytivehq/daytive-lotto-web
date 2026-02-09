@@ -102,7 +102,10 @@ export default function WinningNumbers() {
     setLoading(true);
     setError(null);
     try {
-      const data = await fetchLatestWinning();
+      const data = await fetchLatestWinning((updated) => {
+        // 백그라운드에서 새 회차 데이터가 도착하면 자동 갱신
+        setLatest(updated);
+      });
       setLatest(data);
     } catch (e) {
       setError(e instanceof Error ? e.message : '데이터를 불러올 수 없습니다.');

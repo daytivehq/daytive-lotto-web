@@ -139,4 +139,9 @@ const ogImage = `${siteUrl}/og-image.png`;
     activeLink.classList.remove('text-gray-400');
     activeLink.classList.add('text-blue-500');
   }
+
+  // Service Worker 등록
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  }
 </script>
