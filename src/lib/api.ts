@@ -151,6 +151,33 @@ export async function fetchWinningByRound(round: number): Promise<WinningData> {
 }
 
 /**
+ * 여러 회차의 당첨번호를 병렬로 가져옵니다.
+ * 동시 요청 수를 제한하여 API 부하를 방지합니다.
+ */
+export async function fetchMultipleRounds(
+  latestRound: number,
+  count: number,
+  onProgress?: (loaded: number, total: number) => void
+): Promise<WinningData[]> {
+  const BATCH_SIZE = 10
+  const rounds = Array.from({ length: count }, (_, i) => latestRound - i)
+  const results: WinningData[] = []
+
+  for (let i = 0; i < rounds.length; i += BATCH_SIZE) {
+    const batch = rounds.slice(i, i + BATCH_SIZE)
+    const batchResults = await Promise.all(
+      batch.map(round => fetchWinningByRound(round).catch(() => null))
+    )
+    for (const data of batchResults) {
+      if (data) results.push(data)
+    }
+    onProgress?.(Math.min(i + BATCH_SIZE, rounds.length), rounds.length)
+  }
+
+  return results
+}
+
+/**
  * 내 번호와 당첨번호를 비교하여 결과를 반환합니다.
  */
 export interface MatchResult {
