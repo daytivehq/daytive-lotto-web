@@ -11,7 +11,8 @@
       "Bash(dir:*)",
       "Bash(powershell -Command:*)",
       "Bash(curl:*)",
-      "Bash(ls -la \"d:\\\\Project\\\\lotto-web\\\\dist\\\\winning\"\" 2>/dev/null; ls -la \"d:Projectlotto-webdistfavorites\"\")"
+      "Bash(ls -la \"d:\\\\Project\\\\lotto-web\\\\dist\\\\winning\"\" 2>/dev/null; ls -la \"d:Projectlotto-webdistfavorites\"\")",
+      "Bash(java -version:*)"
     ]
   }
 }
